@@ -8,13 +8,13 @@ import my.kata.mbr.stock.StockService;
 
 public class Application {
 
-	private final EventBus<DomainEvent> domainEvents;
+	private final EventBus<DomainEvent> events;
 	private final StockService stock;
 	private final PaymentService payment;
 
 	public Application(final EventBus<DomainEvent> events, final StockService stock,
 			final PaymentService payment) {
-		this.domainEvents = events;
+		this.events = events;
 		this.stock = stock;
 		this.payment = payment;
 	}
@@ -23,17 +23,17 @@ public class Application {
 
 		if (!payment.receivedFor(order.id()) && !order.payedByCreditCard()) {
 			final String reason = "no payment received yet";
-			domainEvents.publish(new OrderProcessingDelayed(order.id(), reason));
+			events.publish(new OrderProcessingDelayed(order.id(), reason));
 			return;
 		}
 
 		if (!stock.goodsAvailableFor(order.id())) {
 			final String reason = "order will be processed as soon as goods are available";
-			domainEvents.publish(new OrderProcessingDelayed(order.id(), reason));
+			events.publish(new OrderProcessingDelayed(order.id(), reason));
 			return;
 		}
 
-		domainEvents.publish(new OrderProcessed(order.id()));
+		events.publish(new OrderProcessed(order.id()));
 
 	}
 
