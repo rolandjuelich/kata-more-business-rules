@@ -5,7 +5,7 @@ Please find the original version of the kata [here](http://codekata.com/kata/kat
 # Description
 The rules that specify the overall processing of an order can be complex too, particularly as they often involve waiting around for things to happen.
 
-In Kata Sixteen we had a look at the business rules that applied when we received payment for various kinds of product. Handling payments is just a small part of the overall workflow required to process an order. For the company whose application we’re looking at, order processing looks something like:
+In Kata ["Business Rules"](https://github.com/rolandjuelich/kata-business-rules) we had a look at the business rules that applied when we received payment for various kinds of product. Handling payments is just a small part of the overall workflow required to process an order. For the company whose application we’re looking at, order processing looks something like:
 
 * If we accept an order over the web, then we have to wait for payment to arrive, unless it’s a credit-card order. In the case of credit card orders, we can process the order immediately and ship the goods, but only if the goods are in stock. If they are not currently in stock, we have to delay processing credit card orders until the become available again.
 
