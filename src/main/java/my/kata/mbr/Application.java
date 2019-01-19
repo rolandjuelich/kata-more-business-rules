@@ -12,9 +12,9 @@ public class Application {
 	private final StockService stock;
 	private final PaymentService payment;
 
-	public Application(final EventBus<DomainEvent> domainEvents, final StockService stock,
+	public Application(final EventBus<DomainEvent> events, final StockService stock,
 			final PaymentService payment) {
-		this.domainEvents = domainEvents;
+		this.domainEvents = events;
 		this.stock = stock;
 		this.payment = payment;
 	}
@@ -25,7 +25,7 @@ public class Application {
 			return;
 		}
 
-		if (!stock.goodsAvailable(order.id())) {
+		if (!stock.goodsAvailableFor(order.id())) {
 			final String reason = "order will be processed as soon as goods are available";
 			domainEvents.publish(new OrderProcessingDelayed(order.id(), reason));
 			return;

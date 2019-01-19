@@ -4,7 +4,7 @@ import my.kata.mbr.order.OrderId;
 
 public class StockService {
 
-	public boolean goodsAvailable(final OrderId orderId) {
+	public boolean goodsAvailableFor(final OrderId orderId) {
 		throw new UnsupportedOperationException();
 	}
 

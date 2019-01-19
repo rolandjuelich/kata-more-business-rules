@@ -46,7 +46,7 @@ public class OrderProcessingAcceptanceTest {
 		// given
 		final ProcessOrder order = someNonCreditCardOrder();
 		given(payment.receivedFor(order.id())).willReturn(true);
-		given(stock.goodsAvailable(order.id())).willReturn(true);
+		given(stock.goodsAvailableFor(order.id())).willReturn(true);
 
 		// when
 		application.process(order);
@@ -60,7 +60,7 @@ public class OrderProcessingAcceptanceTest {
 	public void shouldProcessOrderImmediatlyIfPayedByCreditCard() {
 		// given
 		final ProcessOrder order = someCreditCardOrder();
-		given(stock.goodsAvailable(order.id())).willReturn(true);
+		given(stock.goodsAvailableFor(order.id())).willReturn(true);
 
 		// when
 		application.process(order);
@@ -74,7 +74,7 @@ public class OrderProcessingAcceptanceTest {
 	public void shouldDelayProcessingCreditCardOrdersWhileGoodsAreNotInStock() {
 		// given
 		final ProcessOrder order = someCreditCardOrder();
-		given(stock.goodsAvailable(order.id())).willReturn(false);
+		given(stock.goodsAvailableFor(order.id())).willReturn(false);
 
 		// when
 		application.process(order);
