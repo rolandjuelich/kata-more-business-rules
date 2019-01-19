@@ -1,0 +1,33 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+		classpath 'net.serenity-bdd:serenity-gradle-plugin:2.0.29'
+    }
+}
+
+
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'eclipse'
+}
+
+apply plugin: 'net.serenity-bdd.aggregator'
+
+dependencies {
+    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
+    implementation 'org.apache.commons:commons-lang3:3.8'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.21.0'
+    testImplementation 'org.assertj:assertj-core:3.11.1'
+    testImplementation 'net.serenity-bdd:serenity-core:2.0.24'
+    testImplementation 'net.serenity-bdd:serenity-spring:2.0.24'
+    testImplementation 'net.serenity-bdd:serenity-jbehave:1.44.0'
+}
+
+repositories {
+    jcenter()
+}
