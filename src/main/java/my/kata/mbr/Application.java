@@ -1,39 +1,37 @@
 package my.kata.mbr;
 
-import my.kata.mbr.order.OrderId;
-import my.kata.mbr.order.OrderService;
 import my.kata.mbr.order.command.ProcessOrder;
 import my.kata.mbr.order.event.OrderProcessed;
 import my.kata.mbr.order.event.OrderProcessingDelayed;
+import my.kata.mbr.payment.PaymentService;
 import my.kata.mbr.stock.StockService;
 
 public class Application {
 
 	private final EventBus<DomainEvent> domainEvents;
 	private final StockService stock;
-	private final OrderService orders;
+	private final PaymentService payment;
 
-	public Application(final EventBus<DomainEvent> domainEvents, final StockService stock, final OrderService orders) {
+	public Application(final EventBus<DomainEvent> domainEvents, final StockService stock,
+			final PaymentService payment) {
 		this.domainEvents = domainEvents;
 		this.stock = stock;
-		this.orders = orders;
+		this.payment = payment;
 	}
 
 	public void process(final ProcessOrder order) {
 
-		final OrderId orderId = order.orderId();
-
-		if (!order.payedByCreditCard() && !orders.paymentComplete(orderId)) {
+		if (!order.payedByCreditCard() && !payment.receivedFor(order.id())) {
 			return;
 		}
 
-		if (!stock.goodsAvailable(orderId)) {
+		if (!stock.goodsAvailable(order.id())) {
 			final String reason = "order will be processed as soon as goods are available";
-			domainEvents.publish(new OrderProcessingDelayed(orderId, reason));
+			domainEvents.publish(new OrderProcessingDelayed(order.id(), reason));
 			return;
 		}
 
-		domainEvents.publish(new OrderProcessed(orderId));
+		domainEvents.publish(new OrderProcessed(order.id()));
 
 	}
 

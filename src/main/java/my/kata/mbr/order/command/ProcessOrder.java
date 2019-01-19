@@ -4,16 +4,16 @@ import my.kata.mbr.order.OrderId;
 
 public class ProcessOrder {
 
-	private final OrderId orderId;
+	private final OrderId id;
 	private boolean payedByCreditCard;
 
 	public ProcessOrder(final OrderId orderId, boolean payedByCreditCard) {
-		this.orderId = orderId;
+		this.id = orderId;
 		this.payedByCreditCard = payedByCreditCard;
 	}
 
-	public OrderId orderId() {
-		return orderId;
+	public OrderId id() {
+		return id;
 	}
 
 	public boolean payedByCreditCard() {

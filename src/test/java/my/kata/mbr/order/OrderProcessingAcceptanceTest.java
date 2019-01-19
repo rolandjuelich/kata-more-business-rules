@@ -17,6 +17,7 @@ import my.kata.mbr.EventBus;
 import my.kata.mbr.order.command.ProcessOrder;
 import my.kata.mbr.order.event.OrderProcessed;
 import my.kata.mbr.order.event.OrderProcessingDelayed;
+import my.kata.mbr.payment.PaymentService;
 import my.kata.mbr.stock.StockService;
 
 public class OrderProcessingAcceptanceTest {
@@ -24,63 +25,63 @@ public class OrderProcessingAcceptanceTest {
 	@SuppressWarnings("unchecked")
 	private final EventBus<DomainEvent> eventBus = mock(EventBus.class);
 	private final StockService stock = mock(StockService.class);
-	private final OrderService orders = mock(OrderService.class);
-	private final Application application = new Application(eventBus, stock, orders);
+	private final PaymentService payment = mock(PaymentService.class);
+	private final Application application = new Application(eventBus, stock, payment);
 
 	@Test
 	public void shouldWaitForPaymentOfNonCreditCardOrders() {
 		// given
-		final ProcessOrder command = someNonCreditCardOrder();
-		given(orders.paymentComplete(command.orderId())).willReturn(false);
+		final ProcessOrder order = someNonCreditCardOrder();
+		given(payment.receivedFor(order.id())).willReturn(false);
 
 		// when
-		application.process(command);
+		application.process(order);
 
 		// then
 		verify(eventBus, never()).publish(Mockito.any(DomainEvent.class));
 	}
-	
+
 	@Test
 	public void shouldProcessOrdersIfPaymentArrived() {
 		// given
-		final ProcessOrder command = someNonCreditCardOrder();
-		given(orders.paymentComplete(command.orderId())).willReturn(true);
-		given(stock.goodsAvailable(command.orderId())).willReturn(true);
-		
+		final ProcessOrder order = someNonCreditCardOrder();
+		given(payment.receivedFor(order.id())).willReturn(true);
+		given(stock.goodsAvailable(order.id())).willReturn(true);
+
 		// when
-		application.process(command);
-		
+		application.process(order);
+
 		// then
 		final OrderProcessed event = catchEvent(OrderProcessed.class);
-		assertThat(event.orderId()).isEqualTo(command.orderId());
+		assertThat(event.orderId()).isEqualTo(order.id());
 	}
 
 	@Test
 	public void shouldProcessOrderImmediatlyIfPayedByCreditCard() {
 		// given
-		final ProcessOrder command = someCreditCardOrder();
-		given(stock.goodsAvailable(command.orderId())).willReturn(true);
+		final ProcessOrder order = someCreditCardOrder();
+		given(stock.goodsAvailable(order.id())).willReturn(true);
 
 		// when
-		application.process(command);
+		application.process(order);
 
 		// then
 		final OrderProcessed event = catchEvent(OrderProcessed.class);
-		assertThat(event.orderId()).isEqualTo(command.orderId());
+		assertThat(event.orderId()).isEqualTo(order.id());
 	}
 
 	@Test
 	public void shouldDelayProcessingCreditCardOrdersWhileGoodsAreNotInStock() {
 		// given
-		final ProcessOrder command = someCreditCardOrder();
-		given(stock.goodsAvailable(command.orderId())).willReturn(false);
+		final ProcessOrder order = someCreditCardOrder();
+		given(stock.goodsAvailable(order.id())).willReturn(false);
 
 		// when
-		application.process(command);
+		application.process(order);
 
 		// then
 		final OrderProcessingDelayed event = catchEvent(OrderProcessingDelayed.class);
-		assertThat(event.orderId()).isEqualTo(command.orderId());
+		assertThat(event.orderId()).isEqualTo(order.id());
 		assertThat(event.reason()).isEqualTo("order will be processed as soon as goods are available");
 	}
 
