@@ -4,12 +4,10 @@ import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 import my.kata.mbr.Application;
 import my.kata.mbr.DomainEvent;
@@ -38,7 +36,8 @@ public class OrderProcessingAcceptanceTest {
 		application.process(order);
 
 		// then
-		verify(eventBus, never()).publish(Mockito.any(DomainEvent.class));
+		final OrderProcessingDelayed event = catchEvent(OrderProcessingDelayed.class);
+		assertThat(event.reason()).isEqualTo("no payment received yet");
 	}
 
 	@Test

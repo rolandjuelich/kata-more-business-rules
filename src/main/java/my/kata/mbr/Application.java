@@ -21,7 +21,9 @@ public class Application {
 
 	public void process(final ProcessOrder order) {
 
-		if (!order.payedByCreditCard() && !payment.receivedFor(order.id())) {
+		if (!payment.receivedFor(order.id()) && !order.payedByCreditCard()) {
+			final String reason = "no payment received yet";
+			domainEvents.publish(new OrderProcessingDelayed(order.id(), reason));
 			return;
 		}
 
