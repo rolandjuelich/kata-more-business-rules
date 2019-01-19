@@ -1,4 +1,4 @@
-package my.kata.mbr;
+package my.kata.mbr.order;
 
 public final class OrderId {
 

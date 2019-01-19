@@ -1,7 +1,7 @@
 package my.kata.mbr;
 
-public interface EventBus {
+public interface EventBus<T extends DomainEvent> {
 
-	void publish(final OrderProcessed event);
+	void publish(T event);
 
 }

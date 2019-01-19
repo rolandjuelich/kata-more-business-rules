@@ -1,6 +1,9 @@
-package my.kata.mbr;
+package my.kata.mbr.order.event;
 
-public class OrderProcessed {
+import my.kata.mbr.DomainEvent;
+import my.kata.mbr.order.OrderId;
+
+public class OrderProcessed implements DomainEvent {
 
 	private final OrderId orderId;
 
